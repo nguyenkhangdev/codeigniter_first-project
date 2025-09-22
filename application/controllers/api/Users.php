@@ -11,7 +11,6 @@ class Users extends CI_Controller
     {
         parent::__construct();
         $this->load->model('User_model');
-        header("Content-Type: application/json");
     }
 
     // 2 case: get one and get all user
@@ -21,14 +20,15 @@ class Users extends CI_Controller
             if ($id === null) {
 
                 $users = $this->User_model->read_users();
-                echo json_encode($users);
+                return response($users, "Get users successfully");
             } else {
                 $user = $this->User_model->read_user($id);
                 if ($user) {
-                    echo json_encode($user);
+
+                    return response($user, "Get user successfully");
                 } else {
                     http_response_code(400);
-                    echo json_encode(['message' => 'User not found']);
+                    return response(null, "User not found");
                 }
             }
         }
