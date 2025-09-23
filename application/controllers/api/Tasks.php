@@ -24,7 +24,7 @@ class Tasks extends CI_Controller
             switch ($method) {
                 case 'GET':
                     if ($id === null) {
-                        // GET /api/tasks
+                        // GET /api/tasks 
                         $tasks = $this->Task_model->read_tasks($user['id']);
                         return response($tasks, "Get tasks successfully");
                     } else {
@@ -41,7 +41,7 @@ class Tasks extends CI_Controller
                 case 'POST':
                     // POST /api/tasks
                     $data = json_decode($this->input->raw_input_stream, true);
-                    if (!$data || !isset($data['title']) || !isset($data['description']) || !isset($data['status'])) {
+                    if (!$data || !isset($data['title'])  || !isset($data['status'])) {
                         return response(null, 'Invalid input', 'error', 400);
                     }
                     //Testing version
@@ -66,7 +66,8 @@ class Tasks extends CI_Controller
                     }
 
                     $task = $this->Task_model->read_task($id);
-                    if (!$task || $user['id'] !== $task->user_id) {
+
+                    if (!$task || $user['id'] !== $task['user_id']) {
                         return response(null, "Task not found", "error", 404);
                     }
 
@@ -85,7 +86,7 @@ class Tasks extends CI_Controller
                     }
 
                     $task = $this->Task_model->read_task($id);
-                    if (!$task || $user['id'] !== $task->user_id) {
+                    if (!$task || $user['id'] !== $task['user_id']) {
                         return response(null, "Task not found", "error", 404);
                     }
 

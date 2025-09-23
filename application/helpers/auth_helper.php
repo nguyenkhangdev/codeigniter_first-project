@@ -16,7 +16,6 @@ if (!function_exists('jwt_authenticate')) {
         if (!$user['id']) {
             response(null, 'Unauthorized', 'error', 401);
         }
-        echo $user;
 
         return $user;
     }
