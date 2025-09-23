@@ -34,8 +34,17 @@ class Auth extends CI_Controller
                 'expire' => 3600,
                 'samesite' => 'Lax',
             ];
-            $this->input->set_cookie($cookie);
+            set_cookie($cookie);
             return response($user, 'Login successfully');
+        } catch (Exception $e) {
+            return response(null, $e->getMessage(), "error", 500);
+        }
+    }
+    public function logout()
+    {
+        try {
+            delete_cookie('jwt_token', '', '/');
+            return response(null, 'Logout successfully');
         } catch (Exception $e) {
             return response(null, $e->getMessage(), "error", 500);
         }
