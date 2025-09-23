@@ -60,7 +60,7 @@ $route['api/tasks/(:num)'] = 'api/tasks/index/$1';
 
 //view
 $route['login'] = 'app/login';
-$route['signup'] = 'app/signup';
+$route['signup'] = 'app/signup'; 
 
 $route['default_controller'] = 'app';
 $route['404_override'] = '';

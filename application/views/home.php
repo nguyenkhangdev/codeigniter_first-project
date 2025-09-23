@@ -11,6 +11,12 @@
 
 <body ng-controller="TodoAppController">
 	<div class="mx-auto max-w-2xl p-3">
+		<div class="w-full border-b flex flex-row justify-between pb-2">
+			<h1>Xin chào, <?= $user['email']; ?>!</h1>
+			<button ng-click="logout()" class="bg-red-600 text-white px-4 py-1 rounded">
+				Logout
+			</button>
+		</div>
 		<h1 class="text-center font-bold text-4xl py-3">Task Manager</h1>
 
 		<!-- Form tạo task -->
@@ -167,6 +173,17 @@
 					});
 					$scope.loadTasks();
 				};
+				$scope.logout = function() {
+					$http.post("<?= base_url('/api/auth/logout') ?>").then(function(res) {
+						alert(res.data.message || "Logged out");
+
+
+						// Redirect về trang login
+						window.location.reload();
+					});
+				};
+
+
 			}]);
 	</script>
 </body>
