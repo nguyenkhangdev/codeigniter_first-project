@@ -8,8 +8,11 @@ class User_model extends CI_Model
         return  $this->db->get_where('users', array('id' => $id))->row_array();
     }
 
-    public function read_users()
+    public function read_users($user_id = null)
     {
+        if ($user_id) {
+            return  $this->db->get_where('users', array('user_id' => $user_id))->row_array();
+        }
         return $this->db->get('users')->result_array();
     }
 

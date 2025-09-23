@@ -11,7 +11,7 @@ class Tasks extends CI_Controller
     {
         parent::__construct();
         $this->load->model('Task_model');
-        $this->load->helper('api');
+        $this->load->helper('api', 'auth');
     }
 
     //CI3 not support nany method http so we must use check method in controller method index
@@ -19,17 +19,18 @@ class Tasks extends CI_Controller
     {
         try {
             $method = $this->input->method(TRUE); // GET | POST | PUT | DELETE
+            $user = jwt_authenticate();
 
             switch ($method) {
                 case 'GET':
                     if ($id === null) {
                         // GET /api/tasks
-                        $tasks = $this->Task_model->read_tasks();
+                        $tasks = $this->Task_model->read_tasks($user['id']);
                         return response($tasks, "Get tasks successfully");
                     } else {
                         // GET /api/tasks/:id
                         $task = $this->Task_model->read_task($id);
-                        if ($task) {
+                        if ($task && $user['id'] === $task->user_id) {
                             return response($task, "Get task successfully");
                         } else {
                             return response(null, "Task not found", "error", 404);
@@ -44,7 +45,7 @@ class Tasks extends CI_Controller
                         return response(null, 'Invalid input', 'error', 400);
                     }
                     //Testing version
-                    $data['user_id'] = '1';
+                    $data['user_id'] = $user['id'];
 
                     $createdTask = $this->Task_model->create_task($data);
                     if ($createdTask) {
@@ -63,6 +64,12 @@ class Tasks extends CI_Controller
                     if (!$data) {
                         return response(null, 'Invalid request', 'error', 400);
                     }
+
+                    $task = $this->Task_model->read_task($id);
+                    if (!$task || $user['id'] !== $task->user_id) {
+                        return response(null, "Task not found", "error", 404);
+                    }
+
                     $updatedTask = $this->Task_model->update_task($id, $data);
                     if ($updatedTask) {
                         return response($updatedTask, "Update task successfully");
@@ -76,6 +83,12 @@ class Tasks extends CI_Controller
                     if ($id === null) {
                         return response(null, 'Missing task id', 'error', 400);
                     }
+
+                    $task = $this->Task_model->read_task($id);
+                    if (!$task || $user['id'] !== $task->user_id) {
+                        return response(null, "Task not found", "error", 404);
+                    }
+
                     $deletedTask = $this->Task_model->delete_task($id);
                     if ($deletedTask) {
                         return response($deletedTask, "Delete task successfully");

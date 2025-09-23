@@ -5,8 +5,7 @@ if (!function_exists('jwt_authenticate')) {
     function jwt_authenticate()
     {
         $ci = &get_instance();
-        $ci->load->helper('jwt');
-
+        $ci->load->helper('jwt', 'cookie');
 
         $token = $ci->input->cookie('jwt_token', TRUE);
         if (!$token) {
@@ -14,9 +13,10 @@ if (!function_exists('jwt_authenticate')) {
         }
 
         $user = validate_jwt($token);
-        if (!$user) {
+        if (!$user['id']) {
             response(null, 'Unauthorized', 'error', 401);
         }
+        echo $user;
 
         return $user;
     }

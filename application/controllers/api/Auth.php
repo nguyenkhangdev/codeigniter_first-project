@@ -27,7 +27,7 @@ class Auth extends CI_Controller
             if (!$user || !password_verify($data['password'], $user['password_hash'])) {
                 return response(null, 'Invalid credentials', 'error', 401);
             }
-            $jwt = generate_jwt(['user_id' => $user['id'], 'email' => $user['email']]);
+            $jwt = generate_jwt(['id' => $user['id'], 'email' => $user['email']]);
             $cookie = [
                 'name' => 'jwt_token',
                 'value' => $jwt,

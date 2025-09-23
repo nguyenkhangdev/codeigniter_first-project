@@ -33,7 +33,7 @@ if (!function_exists('validate_jwt')) {
 
         try {
             $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
-            return $decoded;
+            return  (array) $decoded->data;
         } catch (Exception $e) {
             return false;
         }

@@ -8,8 +8,11 @@ class Task_model extends CI_Model
         return  $this->db->get_where('tasks', array('id' => $id))->row_array();
     }
 
-    public function read_tasks()
+    public function read_tasks($user_id = null)
     {
+        if ($user_id) {
+            return  $this->db->get_where('tasks', array('user_id' => $user_id))->row_array();
+        }
         return $this->db->get('tasks')->result_array();
     }
 
