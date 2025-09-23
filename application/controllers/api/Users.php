@@ -94,20 +94,4 @@ class Users extends CI_Controller
             return response(null, $e->getMessage(), "error", 500);
         }
     }
-
-    private function _authorize()
-    {
-        $headers = $this->input->get_request_header('Authorization');
-        if (!$headers) {
-            return response(null, 'Unauthorized', 'error', 401);
-        }
-
-        $token = str_replace('Bearer ', '', $headers);
-        $user = validate_jwt($token);
-        if (!$user) {
-            return response(null, 'Invalid token', 'error', 401);
-        }
-
-        return $user; // trả thông tin user nếu cần
-    }
 }
