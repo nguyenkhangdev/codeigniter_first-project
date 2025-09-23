@@ -5,7 +5,11 @@ class User_model extends CI_Model
 {
     public function read_user($id)
     {
-        return  $this->db->get_where('users', array('id' => $id))->row_array();
+        $user = $this->db->get_where('users', array('id' => $id))->row_array();
+        if ($user) {
+            unset($user['password_hash']);
+        }
+        return $user;
     }
 
     public function read_users($user_id = null)
@@ -18,19 +22,28 @@ class User_model extends CI_Model
 
     public function create_user($data)
     {
-        return  $this->db->insert('users', $data);
+        if ($this->db->insert('users', $data)) {
+            echo "asaa";
+            $id = $this->db->insert_id(); // ID vừa tạo
+            $new_user = $this->db->get_where('users', ['id' => $id])->row_array();
+            if ($new_user) {
+                unset($new_user['password_hash']);
+            }
+            return $new_user;
+        }
+        return false;
     }
 
-    public function update_user($id, $data)
-    {
-        $this->db->where('id', $id);
-        return  $this->db->update('users', $data);
-    }
+    // public function update_user($id, $data)
+    // {
+    //     $this->db->where('id', $id);
+    //     return  $this->db->update('users', $data);
+    // }
 
-    public function delete_user($id)
-    {
-        return $this->db->delete('users',  array('id' => $id));
-    }
+    // public function delete_user($id)
+    // {
+    //     return $this->db->delete('users',  array('id' => $id));
+    // }
 
     public function get_user_by_email($email)
     {
