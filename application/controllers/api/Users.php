@@ -40,9 +40,11 @@ class Users extends CI_Controller
                 case 'POST':
                     // POST /api/users
                     $data = json_decode($this->input->raw_input_stream, true);
-                    if (!$data || !isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
+                    if (!$data  || !isset($data['email']) || !isset($data['password'])) {
                         return response(null, 'Invalid input', 'error', 400);
                     }
+                    $data['password_hash'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                    unset($data['password']);
                     $createdUser = $this->User_model->create_user($data);
                     if ($createdUser) {
                         return response($createdUser, "Create user successfully", "success", 201);
@@ -59,6 +61,10 @@ class Users extends CI_Controller
                     $data = json_decode($this->input->raw_input_stream, true);
                     if (!$data) {
                         return response(null, 'Invalid request', 'error', 400);
+                    }
+                    if (isset($data['password'])) {
+                        $data['password_hash'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                        unset($data['password']);
                     }
                     $updatedUser = $this->User_model->update_user($id, $data);
                     if ($updatedUser) {
@@ -87,5 +93,21 @@ class Users extends CI_Controller
         } catch (Exception $e) {
             return response(null, $e->getMessage(), "error", 500);
         }
+    }
+
+    private function _authorize()
+    {
+        $headers = $this->input->get_request_header('Authorization');
+        if (!$headers) {
+            return response(null, 'Unauthorized', 'error', 401);
+        }
+
+        $token = str_replace('Bearer ', '', $headers);
+        $user = validate_jwt($token);
+        if (!$user) {
+            return response(null, 'Invalid token', 'error', 401);
+        }
+
+        return $user; // trả thông tin user nếu cần
     }
 }
